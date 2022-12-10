@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=., initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>URL Shrinker</h1>
+      <form class="my-4 form-inline">
+        <label for="fullUrl" class="sr-only">Url</label>
+        <input
+          required
+          placeholder="Url"
+          type="url"
+          name="fullUrl"
+          id="fullUrl"
+          class="form-control col mr-2"
+        />
+        <button class="btn btn-success" type="submit" id="form">Shrink</button>
+      </form>
+
+      <table class="table table-striped table-responsive">
+        <thead>
+          <tr>
+            <th>Full URL</th>
+            <th>Short URL</th>
+            <th>Clicks</th>
+          </tr>
+        </thead>
+        <tbody id="tableRow"></tbody>
+      </table>
+    </div>
+
+    <script>
+      //   import axios from "axios";
+
+      let form = document.getElementById("form");
+      let fullUrl = document.getElementById("fullUrl");
+      form.addEventListener("click", handleForm);
+      // allfetchUrl();
+
+      async function handleForm(e) {
+        e.preventDefault();
+        fullUrl = fullUrl.value;
+        // console.log(fullUrl);
+
+        if (fullUrl === "") {
+          return alert("please put valid url");
+        }
+
+        let res = await fetch("http://localhost:5000/shortUrls", {
+          method: "POST",
+          body: JSON.stringify({
+            fullUrl,
+          }),
+
+          headers: {
+            "Content-type": "application/json",
+          },
+        });
+        try {
+          let data = await res.json();
+          // console.log(data);
+
+          appendData(data);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      function appendData(elem) {
+        console.log(elem);
+        let tableRow = document.getElementById("tableRow");
+        tableRow.innerHTML = null;
+
+        let tr = document.createElement("tr");
+
+        let td1 = document.createElement("td");
+        let a1 = document.createElement("a");
+        a1.setAttribute("href", elem.fullUrl);
+        a1.innerText = elem.fullUrl;
+
+        let td2 = document.createElement("td");
+        let a2 = document.createElement("a");
+        a2.setAttribute("href", `http://localhost:5000/${elem.randomurl}`);
+        a2.innerText = `http://localhost:5000/${elem.randomurl}`;
+        td1.append(a1);
+        td2.append(a2);
+        tr.append(td1, td2);
+        tableRow.append(tr);
+      }
+    </script>
+  </body>
+</html>
